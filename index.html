@@ -69,81 +69,74 @@ Whittington History Hub<br>
 
 <div class="timeline">
 
-<div class="item" onclick="show('pegge')">
+<div class="item" onclick="showBio('pegge')">
 <strong>Dr Samuel Pegge (1751–1796)</strong>
 </div>
 
-<div class="item" onclick="show('dixon')">
+<div class="item" onclick="showBio('dixon')">
 <strong>John Dixon (1777–1816)</strong>
 </div>
 
-<div class="item" onclick="show('gordon')">
+<div class="item" onclick="showBio('gordon')">
 <strong>George Gordon Jnr (1816–1872)</strong>
 </div>
 
-<div class="item" onclick="show('swanwick')">
+<div class="item" onclick="showBio('swanwick')">
 <strong>Frederick Swanwick (1837–1885)</strong>
 </div>
 
-<div class="item" onclick="show('syddall')">
+<div class="item" onclick="showBio('syddall')">
 <strong>Joseph Syddall (1863–1920)</strong>
 </div>
 
-<div class="item" onclick="show('brearley')">
+<div class="item" onclick="showBio('brearley')">
 <strong>Harry Brearley (1910–1920)</strong>
 </div>
 
 </div>
 
 <div id="popup" class="popup">
-<span class="close" onclick="hide()">✖</span>
+<span class="close" onclick="hideBio()">✖</span>
 <h3 id="title"></h3>
 <p id="desc"></p>
 </div>
 
 <script>
-const data = {
+function showBio(id) {
+  const bios = {
+    pegge: {
+      title: "Dr Samuel Pegge (1751–1796)",
+      desc: "Rector of Whittington and noted antiquarian. His work preserved important local history and coincided with the later Dixon period."
+    },
+    dixon: {
+      title: "John Dixon (1777–1816)",
+      desc: "A key late figure in the Dixon family, bridging the 18th and 19th centuries and overlapping with emerging new leadership in the parish."
+    },
+    gordon: {
+      title: "George Gordon Jnr (1816–1872)",
+      desc: "A long-serving clerical figure whose tenure spans major social and industrial change in Whittington."
+    },
+    swanwick: {
+      title: "Frederick Swanwick (1837–1885)",
+      desc: "Engineer associated with the railway age, contributing to the wider industrial transformation influencing Whittington."
+    },
+    syddall: {
+      title: "Joseph Syddall (1863–1920)",
+      desc: "Artist known for detailed works and local connections, contributing to Whittington’s cultural heritage."
+    },
+    brearley: {
+      title: "Harry Brearley (1910–1920)",
+      desc: "Metallurgist and pioneer of stainless steel, representing the global industrial legacy connected to the area."
+    }
+  };
 
-pegge: {
-title: "Dr Samuel Pegge (1751–1796)",
-desc: "Rector of Whittington and noted antiquarian. His work preserved important local history and coincided with the later Dixon period."
-},
-
-dixon: {
-title: "John Dixon (1777–1816)",
-desc: "A key late figure in the Dixon family, bridging the 18th and 19th centuries and overlapping with emerging new leadership in the parish."
-},
-
-gordon: {
-title: "George Gordon Jnr (1816–1872)",
-desc: "A long-serving clerical figure whose tenure spans major social and industrial change in Whittington."
-},
-
-swanwick: {
-title: "Frederick Swanwick (1837–1885)",
-desc: "Engineer associated with the railway age, contributing to the wider industrial transformation influencing Whittington."
-},
-
-syddall: {
-title: "Joseph Syddall (1863–1920)",
-desc: "Artist known for detailed works and local connections, contributing to Whittington’s cultural heritage."
-},
-
-brearley: {
-title: "Harry Brearley (1910–1920)",
-desc: "Metallurgist and pioneer of stainless steel, representing the global industrial legacy connected to the area."
+  document.getElementById("title").innerText = bios[id].title;
+  document.getElementById("desc").innerText = bios[id].desc;
+  document.getElementById("popup").style.display = "block";
 }
 
-};
-
-function show(id){
-document.getElementById('title').innerText = data[id].title;
-document.getElementById('desc').innerText = data[id].desc;
-document.getElementById('popup').style.display = 'block';
-}
-
-function hide(){
-document.getElementById('popup').style.display = 'none';
+function hideBio() {
+  document.getElementById("popup").style.display = "none";
 }
 </script>
 
