@@ -4,518 +4,148 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>When They Lived Together — Whittington</title>
+
 <style>
-:root {
-  --bg: #f6f1e8;
-  --ink: #2f2419;
-  --muted: #6d6256;
-  --line: #c8b9a4;
-  --dixon: #b8d676;
-  --parish: #e9b07d;
-  --local: #8fd97a;
-  --events: #69aee8;
-  --highlight: #7d4f24;
-  --band1: rgba(210, 178, 124, 0.18);
-  --band2: rgba(137, 168, 124, 0.18);
-  --band3: rgba(201, 145, 108, 0.18);
-  --shadow: 0 8px 22px rgba(0,0,0,.08);
-}
-* { box-sizing: border-box; }
 body {
-  margin: 0;
-  font-family: Georgia, "Times New Roman", serif;
-  background: var(--bg);
-  color: var(--ink);
+  font-family: Georgia, serif;
+  background:#f6f1e8;
+  color:#2f2419;
+  margin:0;
 }
+
 header {
-  padding: 28px 28px 10px;
+  padding:20px;
+  text-align:center;
+  background:#e8dfd1;
+  font-size:22px;
 }
-h1 {
-  margin: 0 0 8px;
-  font-size: 42px;
-  line-height: 1.05;
+
+.timeline {
+  padding:20px;
 }
-.subtitle {
-  font-size: 18px;
-  color: var(--muted);
+
+.item {
+  padding:12px;
+  margin:12px 0;
+  border-left:5px solid #8c7b6b;
+  cursor:pointer;
+  background:#fffaf4;
 }
-.shell {
-  display: grid;
-  grid-template-columns: minmax(760px, 1fr) 360px;
-  gap: 18px;
-  padding: 0 20px 24px;
+
+.item:hover {
+  background:#f0e6d8;
 }
-.panel {
-  background: rgba(255,255,255,.45);
-  border: 1px solid rgba(120,96,70,.18);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
+
+.popup {
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#fff;
+  border-top:2px solid #8c7b6b;
+  padding:20px;
+  display:none;
+  box-shadow:0 -4px 12px rgba(0,0,0,0.2);
 }
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding: 16px 18px;
-  align-items: center;
-  border-bottom: 1px solid rgba(120,96,70,.15);
+
+.popup h3 {
+  margin-top:0;
 }
-button.filter {
-  border: 1px solid rgba(120,96,70,.25);
-  background: #fff;
-  color: var(--ink);
-  border-radius: 999px;
-  padding: 8px 12px;
-  cursor: pointer;
-  font: inherit;
-}
-button.filter.active {
-  background: var(--highlight);
-  color: white;
-}
-label.toggle {
-  margin-left: auto;
-  font-size: 15px;
-  color: var(--muted);
-}
-.summary {
-  display: flex;
-  gap: 14px;
-  padding: 0 18px 12px;
-  color: var(--muted);
-  font-size: 15px;
-}
-svg {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-.right {
-  padding: 18px;
-}
-.card-title {
-  font-size: 24px;
-  margin-bottom: 8px;
-}
-.stat {
-  margin: 0 0 12px;
-  color: var(--muted);
-}
-.legend {
-  display: grid;
-  gap: 10px;
-  margin-top: 14px;
-}
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 15px;
-}
-.swatch {
-  width: 14px; height: 14px; border-radius: 4px;
-}
-ul {
-  padding-left: 20px;
-}
-.small {
-  color: var(--muted);
-  font-size: 14px;
-}
-a.download {
-  display: inline-block;
-  margin-top: 8px;
-  color: var(--highlight);
-}
-.tooltip {
-  position: fixed;
-  pointer-events: none;
-  opacity: 0;
-  transform: translate(-50%, calc(-100% - 12px));
-  background: rgba(35,28,20,.95);
-  color: white;
-  padding: 8px 10px;
-  border-radius: 8px;
-  font-size: 14px;
-  max-width: 260px;
-  transition: opacity .12s ease;
-  z-index: 10;
-}
-footer {
-  padding: 0 20px 20px;
-  color: var(--muted);
-  font-size: 14px;
-}
-@media (max-width: 1100px) {
-  .shell { grid-template-columns: 1fr; }
+
+.close {
+  float:right;
+  cursor:pointer;
+  font-size:18px;
 }
 </style>
 </head>
+
 <body>
+
 <header>
-  <h1>When They Lived Together</h1>
-  <div class="subtitle">Overlapping lives in Whittington’s past, built from the uploaded timeline source.</div>
+Whittington History Hub<br>
+<small>When They Lived Together: Overlapping Lives</small>
 </header>
 
-<div class="shell">
-  <section class="panel">
-    <div class="controls">
-      <button class="filter active" data-filter="All">All</button>
-      <button class="filter" data-filter="Dixon Family">Dixon Family</button>
-      <button class="filter" data-filter="Parish / Clergy">Parish / Clergy</button>
-      <button class="filter" data-filter="Local Figures">Local Figures</button>
-      <button class="filter" data-filter="Events">Events</button>
-      <label class="toggle"><input type="checkbox" id="bands" checked> show period bands</label>
-    </div>
-    <div class="summary">
-      <div id="summaryText">Peak overlap: <strong>5</strong> active people (1872, 1896, 1898).</div>
-      <div>Click a person to highlight everyone who overlaps with them.</div>
-    </div>
-    <div style="padding: 0 10px 10px;">
-      <svg id="viz" viewBox="0 0 1280 760" aria-label="Interactive Whittington timeline"></svg>
-    </div>
-  </section>
+<div class="timeline">
 
-  <aside class="panel right">
-    <div class="card-title" id="detailTitle">Timeline details</div>
-    <p class="stat" id="detailYears">Select a person or event on the chart.</p>
-    <div id="detailBody" class="small">
-      <p>This view includes:</p>
-      <ul>
-        <li>a concurrency line at the top showing how many people were active in each year</li>
-        <li>period bands you can toggle on or off</li>
-        <li>click-to-highlight overlaps for individual people</li>
-      </ul>
-      <p>The workbook and CSV files use the same data structure, so all three outputs stay aligned.</p>
-    </div>
-    <div class="legend">
-      <div class="legend-item"><span class="swatch" style="background: var(--dixon);"></span> Dixon Family</div>
-      <div class="legend-item"><span class="swatch" style="background: var(--parish);"></span> Parish / Clergy</div>
-      <div class="legend-item"><span class="swatch" style="background: var(--local);"></span> Local Figures</div>
-      <div class="legend-item"><span class="swatch" style="background: var(--events);"></span> Events</div>
-    </div>
-    <p class="small" style="margin-top:16px;">Source: Old Whittington Local History.pdf (uploaded source; transcribed from pages 2–4, with page 1 used for layout cues)</p>
-  </aside>
+<div class="item" onclick="show('pegge')">
+<strong>Dr Samuel Pegge (1751–1796)</strong>
 </div>
 
-<footer>Tip: if you revise dates or categories in the workbook, mirror those changes into the CSV / HTML data before publishing.</footer>
-<div class="tooltip" id="tooltip"></div>
+<div class="item" onclick="show('dixon')">
+<strong>John Dixon (1777–1816)</strong>
+</div>
+
+<div class="item" onclick="show('gordon')">
+<strong>George Gordon Jnr (1816–1872)</strong>
+</div>
+
+<div class="item" onclick="show('swanwick')">
+<strong>Frederick Swanwick (1837–1885)</strong>
+</div>
+
+<div class="item" onclick="show('syddall')">
+<strong>Joseph Syddall (1863–1920)</strong>
+</div>
+
+<div class="item" onclick="show('brearley')">
+<strong>Harry Brearley (1910–1920)</strong>
+</div>
+
+</div>
+
+<div id="popup" class="popup">
+<span class="close" onclick="hide()">✖</span>
+<h3 id="title"></h3>
+<p id="desc"></p>
+</div>
 
 <script>
-const data = [{"id": "P01", "name": "Richard Dixon", "start": 1702, "end": 1727, "category": "Dixon Family", "type": "Person", "notes": "", "pages": "2", "overlap_count_expected": 1, "overlaps_with": ["Richard Dixon Jnr"], "overlap_count": 1}, {"id": "P02", "name": "Richard Dixon Jnr", "start": 1727, "end": 1736, "category": "Dixon Family", "type": "Person", "notes": "", "pages": "2", "overlap_count_expected": 2, "overlaps_with": ["Richard Dixon", "William Dixon"], "overlap_count": 2}, {"id": "P03", "name": "William Dixon", "start": 1736, "end": 1743, "category": "Dixon Family", "type": "Person", "notes": "", "pages": "2", "overlap_count_expected": 2, "overlaps_with": ["Richard Dixon Jnr", "Richard Dixon Jnr 2"], "overlap_count": 2}, {"id": "P04", "name": "Richard Dixon Jnr 2", "start": 1743, "end": 1769, "category": "Dixon Family", "type": "Person", "notes": "", "pages": "2", "overlap_count_expected": 3, "overlaps_with": ["William Dixon", "Dr Samuel Pegge", "Gilbert Dixon"], "overlap_count": 3}, {"id": "P06", "name": "Gilbert Dixon", "start": 1769, "end": 1777, "category": "Dixon Family", "type": "Person", "notes": "", "pages": "2", "overlap_count_expected": 3, "overlaps_with": ["Richard Dixon Jnr 2", "Dr Samuel Pegge", "John Dixon"], "overlap_count": 3}, {"id": "P07", "name": "John Dixon", "start": 1777, "end": 1816, "category": "Dixon Family", "type": "Person", "notes": "", "pages": "2", "overlap_count_expected": 6, "overlaps_with": ["Dr Samuel Pegge", "Gilbert Dixon", "William Beecher", "Sherard Beecher", "George Gordon (the Elder)", "George Gordon Jnr"], "overlap_count": 6}, {"id": "P05", "name": "Dr Samuel Pegge", "start": 1751, "end": 1796, "category": "Parish / Clergy", "type": "Person", "notes": "Inducted as Rector.", "pages": "2", "overlap_count_expected": 4, "overlaps_with": ["Richard Dixon Jnr 2", "Gilbert Dixon", "John Dixon", "William Beecher"], "overlap_count": 4}, {"id": "P08", "name": "William Beecher", "start": 1796, "end": 1798, "category": "Parish / Clergy", "type": "Person", "notes": "", "pages": "3", "overlap_count_expected": 3, "overlaps_with": ["Dr Samuel Pegge", "John Dixon", "Sherard Beecher"], "overlap_count": 3}, {"id": "P09", "name": "Sherard Beecher", "start": 1798, "end": 1812, "category": "Parish / Clergy", "type": "Person", "notes": "", "pages": "3", "overlap_count_expected": 3, "overlaps_with": ["John Dixon", "William Beecher", "George Gordon (the Elder)"], "overlap_count": 3}, {"id": "P10", "name": "George Gordon (the Elder)", "start": 1812, "end": 1816, "category": "Parish / Clergy", "type": "Person", "notes": "", "pages": "3", "overlap_count_expected": 3, "overlaps_with": ["John Dixon", "Sherard Beecher", "George Gordon Jnr"], "overlap_count": 3}, {"id": "P11", "name": "George Gordon Jnr", "start": 1816, "end": 1872, "category": "Parish / Clergy", "type": "Person", "notes": "", "pages": "3", "overlap_count_expected": 6, "overlaps_with": ["John Dixon", "George Gordon (the Elder)", "Frederick Swanwick", "Mary Swanwick", "Joseph Syddall", "George William Botham"], "overlap_count": 6}, {"id": "P15", "name": "George William Botham", "start": 1872, "end": 1889, "category": "Parish / Clergy", "type": "Person", "notes": "", "pages": "3", "overlap_count_expected": 5, "overlaps_with": ["George Gordon Jnr", "Frederick Swanwick", "Mary Swanwick", "Joseph Syddall", "Clement Clover Ward"], "overlap_count": 5}, {"id": "P16", "name": "Clement Clover Ward", "start": 1889, "end": 1891, "category": "Parish / Clergy", "type": "Person", "notes": "", "pages": "4", "overlap_count_expected": 4, "overlaps_with": ["Mary Swanwick", "Joseph Syddall", "George William Botham", "George Owen Holt"], "overlap_count": 4}, {"id": "P17", "name": "George Owen Holt", "start": 1891, "end": 1896, "category": "Parish / Clergy", "type": "Person", "notes": "", "pages": "4", "overlap_count_expected": 5, "overlaps_with": ["Mary Swanwick", "Joseph Syddall", "Clement Clover Ward", "John Tomlinson", "Maurice Deacon"], "overlap_count": 5}, {"id": "P18", "name": "John Tomlinson", "start": 1892, "end": 1898, "category": "Parish / Clergy", "type": "Person", "notes": "", "pages": "4", "overlap_count_expected": 5, "overlaps_with": ["Mary Swanwick", "Joseph Syddall", "George Owen Holt", "Maurice Deacon", "George Ford"], "overlap_count": 5}, {"id": "P20", "name": "George Ford", "start": 1898, "end": 1922, "category": "Parish / Clergy", "type": "Person", "notes": "", "pages": "4", "overlap_count_expected": 5, "overlaps_with": ["Mary Swanwick", "Joseph Syddall", "John Tomlinson", "Maurice Deacon", "Harry Brearley"], "overlap_count": 5}, {"id": "P12", "name": "Frederick Swanwick", "start": 1837, "end": 1885, "category": "Local Figures", "type": "Person", "notes": "", "pages": "3", "overlap_count_expected": 4, "overlaps_with": ["George Gordon Jnr", "Mary Swanwick", "Joseph Syddall", "George William Botham"], "overlap_count": 4}, {"id": "P13", "name": "Mary Swanwick", "start": 1841, "end": 1917, "category": "Local Figures", "type": "Person", "notes": "", "pages": "3", "overlap_count_expected": 10, "overlaps_with": ["George Gordon Jnr", "Frederick Swanwick", "Joseph Syddall", "George William Botham", "Clement Clover Ward", "George Owen Holt", "John Tomlinson", "Maurice Deacon", "George Ford", "Harry Brearley"], "overlap_count": 10}, {"id": "P14", "name": "Joseph Syddall", "start": 1863, "end": 1920, "category": "Local Figures", "type": "Person", "notes": "", "pages": "3", "overlap_count_expected": 10, "overlaps_with": ["George Gordon Jnr", "Frederick Swanwick", "Mary Swanwick", "George William Botham", "Clement Clover Ward", "George Owen Holt", "John Tomlinson", "Maurice Deacon", "George Ford", "Harry Brearley"], "overlap_count": 10}, {"id": "P19", "name": "Maurice Deacon", "start": 1896, "end": 1907, "category": "Local Figures", "type": "Person", "notes": "", "pages": "4", "overlap_count_expected": 5, "overlaps_with": ["Mary Swanwick", "Joseph Syddall", "George Owen Holt", "John Tomlinson", "George Ford"], "overlap_count": 5}, {"id": "P21", "name": "Harry Brearley", "start": 1910, "end": 1920, "category": "Local Figures", "type": "Person", "notes": "", "pages": "4", "overlap_count_expected": 3, "overlaps_with": ["Mary Swanwick", "Joseph Syddall", "George Ford"], "overlap_count": 3}, {"id": "E01", "name": "Plotting Of Revolution", "start": 1688, "end": 1688, "category": "Events", "type": "Event", "notes": "Point event shown on the original timeline.", "pages": "2", "overlap_count": null, "overlaps_with": []}, {"id": "E02", "name": "New Parish Church Built", "start": 1863, "end": 1863, "category": "Events", "type": "Event", "notes": "Point event shown on the original timeline.", "pages": "3", "overlap_count": null, "overlaps_with": []}, {"id": "E03", "name": "Church Destroyed By Fire", "start": 1895, "end": 1895, "category": "Events", "type": "Event", "notes": "Point event shown on the original timeline.", "pages": "4", "overlap_count": null, "overlaps_with": []}, {"id": "E04", "name": "Present Church Built", "start": 1896, "end": 1896, "category": "Events", "type": "Event", "notes": "Point event shown on the original timeline.", "pages": "4", "overlap_count": null, "overlaps_with": []}];
-const periods = [{"period": "Early Dixon Years", "start": 1702, "end": 1743, "notes": "Early concentration in the Dixon line."}, {"period": "Dixon–Pegge Transitional Period", "start": 1751, "end": 1777, "notes": "Useful exhibition band showing Pegge alongside the Dixon line."}, {"period": "Post-Dixon Realignment", "start": 1796, "end": 1816, "notes": "Leadership handover period around the Beecher/Gordon years."}, {"period": "Victorian Transformation Period", "start": 1863, "end": 1896, "notes": "Dense cluster around the church-building era and local figures."}, {"period": "Fire & Reconstruction Era", "start": 1895, "end": 1907, "notes": "Strong overlap around the fire and rebuilding years."}];
-const minYear = 1688;
-const maxYear = 1922;
+const data = {
 
-const svg = document.getElementById('viz');
-const tooltip = document.getElementById('tooltip');
-const detailTitle = document.getElementById('detailTitle');
-const detailYears = document.getElementById('detailYears');
-const detailBody = document.getElementById('detailBody');
-const buttons = [...document.querySelectorAll('button.filter')];
-const bandToggle = document.getElementById('bands');
+pegge: {
+title: "Dr Samuel Pegge (1751–1796)",
+desc: "Rector of Whittington and noted antiquarian. His work preserved important local history and coincided with the later Dixon period."
+},
 
-const categoryColors = {
-  'Dixon Family': getCSS('--dixon'),
-  'Parish / Clergy': getCSS('--parish'),
-  'Local Figures': getCSS('--local'),
-  'Events': getCSS('--events')
+dixon: {
+title: "John Dixon (1777–1816)",
+desc: "A key late figure in the Dixon family, bridging the 18th and 19th centuries and overlapping with emerging new leadership in the parish."
+},
+
+gordon: {
+title: "George Gordon Jnr (1816–1872)",
+desc: "A long-serving clerical figure whose tenure spans major social and industrial change in Whittington."
+},
+
+swanwick: {
+title: "Frederick Swanwick (1837–1885)",
+desc: "Engineer associated with the railway age, contributing to the wider industrial transformation influencing Whittington."
+},
+
+syddall: {
+title: "Joseph Syddall (1863–1920)",
+desc: "Artist known for detailed works and local connections, contributing to Whittington’s cultural heritage."
+},
+
+brearley: {
+title: "Harry Brearley (1910–1920)",
+desc: "Metallurgist and pioneer of stainless steel, representing the global industrial legacy connected to the area."
+}
+
 };
 
-let activeFilter = 'All';
-let selected = null;
-
-function getCSS(name) {
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-}
-function xScale(year) {
-  const left = 110, right = 1230;
-  return left + (year - minYear) * ((right - left) / (maxYear - minYear));
-}
-function overlaps(a, b) {
-  return a.start <= b.end && a.end >= b.start;
-}
-function filteredData() {
-  return data.filter(d => activeFilter === 'All' || d.category === activeFilter || (activeFilter === 'Events' && d.type === 'Event'));
+function show(id){
+document.getElementById('title').innerText = data[id].title;
+document.getElementById('desc').innerText = data[id].desc;
+document.getElementById('popup').style.display = 'block';
 }
 
-function currentPeopleForSummary() {
-  return filteredData().filter(d => d.type === 'Person');
+function hide(){
+document.getElementById('popup').style.display = 'none';
 }
-
-function computeSummaryText() {
-  const people = currentPeopleForSummary();
-  const counts = [];
-  for (let y = minYear; y <= maxYear; y++) {
-    counts.push({ year: y, c: people.filter(p => p.start <= y && p.end >= y).length });
-  }
-  const peak = Math.max(...counts.map(d => d.c));
-  const years = counts.filter(d => d.c === peak && peak > 0).map(d => d.year);
-  document.getElementById('summaryText').innerHTML =
-    `Peak overlap: <strong>${peak}</strong> active people${years.length ? ' (' + years.join(', ') + ')' : ''}.`;
-}
-
-function render() {
-  svg.innerHTML = '';
-  computeSummaryText();
-
-  const rows = [];
-  const groups = ['Dixon Family', 'Parish / Clergy', 'Local Figures', 'Events'];
-  const groupRows = {};
-  groups.forEach(g => groupRows[g] = []);
-
-  filteredData().forEach(d => groupRows[d.category].push(d));
-
-  const topH = 120;
-  let y = 170;
-  groups.forEach(g => {
-    if (!groupRows[g].length) return;
-    rows.push({ kind: 'label', y: y - 24, text: g });
-    groupRows[g]
-      .sort((a,b) => a.start - b.start || a.end - b.end || a.name.localeCompare(b.name))
-      .forEach(item => {
-        rows.push({ kind: 'item', y, item });
-        y += 36;
-      });
-    y += 18;
-  });
-
-  // bands
-  if (bandToggle.checked) {
-    periods.forEach((p, i) => {
-      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-      rect.setAttribute('x', xScale(p.start));
-      rect.setAttribute('y', 145);
-      rect.setAttribute('width', Math.max(4, xScale(p.end) - xScale(p.start)));
-      rect.setAttribute('height', Math.max(60, y - 155));
-      rect.setAttribute('fill', i % 3 === 0 ? 'var(--band1)' : i % 3 === 1 ? 'var(--band2)' : 'var(--band3)');
-      rect.setAttribute('rx', 8);
-      svg.appendChild(rect);
-
-      const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      label.setAttribute('x', xScale(p.start) + 8);
-      label.setAttribute('y', 164);
-      label.setAttribute('font-size', '14');
-      label.setAttribute('fill', '#5f4d3b');
-      label.textContent = p.period;
-      svg.appendChild(label);
-    });
-  }
-
-  // axis
-  const axis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-  axis.setAttribute('x1', 110); axis.setAttribute('x2', 1230);
-  axis.setAttribute('y1', 132); axis.setAttribute('y2', 132);
-  axis.setAttribute('stroke', '#a89a87');
-  axis.setAttribute('stroke-width', '1.2');
-  svg.appendChild(axis);
-
-  for (let year = 1700; year <= 1925; year += 25) {
-    if (year < minYear || year > maxYear + 3) continue;
-    const x = xScale(Math.min(year, maxYear));
-    const tick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    tick.setAttribute('x1', x); tick.setAttribute('x2', x);
-    tick.setAttribute('y1', 126); tick.setAttribute('y2', y + 10);
-    tick.setAttribute('stroke', '#ddd0bf');
-    tick.setAttribute('stroke-width', '1');
-    svg.appendChild(tick);
-
-    const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    label.setAttribute('x', x - 12);
-    label.setAttribute('y', 118);
-    label.setAttribute('font-size', '14');
-    label.setAttribute('fill', '#7a6b59');
-    label.textContent = year;
-    svg.appendChild(label);
-  }
-
-  // concurrency line
-  const people = currentPeopleForSummary();
-  const counts = [];
-  for (let year = minYear; year <= maxYear; year++) {
-    counts.push({
-      year,
-      c: people.filter(p => p.start <= year && p.end >= year).length
-    });
-  }
-  const peak = Math.max(1, ...counts.map(d => d.c));
-  const points = counts.map(d => {
-    const x = xScale(d.year);
-    const yy = topH - (d.c / peak) * 60;
-    return `${x},${yy}`;
-  }).join(' ');
-  const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-  poly.setAttribute('points', points);
-  poly.setAttribute('fill', 'none');
-  poly.setAttribute('stroke', '#9c7f58');
-  poly.setAttribute('stroke-width', '3');
-  svg.appendChild(poly);
-
-  const countLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  countLabel.setAttribute('x', 110);
-  countLabel.setAttribute('y', 34);
-  countLabel.setAttribute('font-size', '16');
-  countLabel.setAttribute('fill', '#6b5b4b');
-  countLabel.textContent = 'Active people per year';
-  svg.appendChild(countLabel);
-
-  // row labels and bars
-  rows.forEach(row => {
-    if (row.kind === 'label') {
-      const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      t.setAttribute('x', 20);
-      t.setAttribute('y', row.y);
-      t.setAttribute('font-size', '16');
-      t.setAttribute('font-weight', '700');
-      t.setAttribute('fill', '#5f4d3b');
-      t.textContent = row.text;
-      svg.appendChild(t);
-
-      const sep = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      sep.setAttribute('x1', 110); sep.setAttribute('x2', 1230);
-      sep.setAttribute('y1', row.y + 8); sep.setAttribute('y2', row.y + 8);
-      sep.setAttribute('stroke', '#e7dbc9');
-      sep.setAttribute('stroke-width', '1');
-      svg.appendChild(sep);
-      return;
-    }
-
-    const item = row.item;
-    const itemGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    itemGroup.dataset.id = item.id;
-    itemGroup.style.cursor = 'pointer';
-
-    const x = xScale(item.start);
-    const w = Math.max(4, xScale(item.end) - xScale(item.start));
-    const isSelected = selected && selected.id === item.id;
-    const isOverlap = selected && item.type === 'Person' && selected.type === 'Person' && overlaps(selected, item);
-    const fade = selected && !isSelected && !isOverlap ? 0.22 : 1;
-
-    const name = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    name.setAttribute('x', 20);
-    name.setAttribute('y', row.y + 15);
-    name.setAttribute('font-size', '14');
-    name.setAttribute('fill', '#44382b');
-    name.textContent = item.name;
-    name.setAttribute('opacity', fade);
-    svg.appendChild(name);
-
-    if (item.type === 'Event') {
-      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      line.setAttribute('x1', x); line.setAttribute('x2', x);
-      line.setAttribute('y1', row.y - 3); line.setAttribute('y2', row.y + 23);
-      line.setAttribute('stroke', categoryColors[item.category]);
-      line.setAttribute('stroke-width', isSelected ? '5' : '3');
-      line.setAttribute('opacity', fade);
-      itemGroup.appendChild(line);
-
-      const bubble = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      bubble.setAttribute('cx', x); bubble.setAttribute('cy', row.y - 8);
-      bubble.setAttribute('r', isSelected ? '6' : '4');
-      bubble.setAttribute('fill', categoryColors[item.category]);
-      bubble.setAttribute('opacity', fade);
-      itemGroup.appendChild(bubble);
-    } else {
-      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-      rect.setAttribute('x', x);
-      rect.setAttribute('y', row.y);
-      rect.setAttribute('width', w);
-      rect.setAttribute('height', 22);
-      rect.setAttribute('rx', 6);
-      rect.setAttribute('fill', categoryColors[item.category]);
-      rect.setAttribute('stroke', isSelected ? '#5f2f15' : (selected && isOverlap ? '#5f2f15' : 'rgba(0,0,0,.08)'));
-      rect.setAttribute('stroke-width', isSelected ? '3' : (selected && isOverlap ? '2' : '1'));
-      rect.setAttribute('opacity', fade);
-      itemGroup.appendChild(rect);
-
-      const small = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      small.setAttribute('x', x + 8);
-      small.setAttribute('y', row.y + 15);
-      small.setAttribute('font-size', '12');
-      small.setAttribute('fill', '#2f2419');
-      small.setAttribute('opacity', fade);
-      small.textContent = `${item.start}–${item.end}`;
-      itemGroup.appendChild(small);
-    }
-
-    itemGroup.addEventListener('mousemove', (ev) => {
-      tooltip.style.opacity = 1;
-      tooltip.style.left = ev.clientX + 'px';
-      tooltip.style.top = ev.clientY + 'px';
-      const extra = item.type === 'Person'
-        ? `<div><strong>${item.overlap_count}</strong> contemporaries in dataset</div>`
-        : `<div>Point event</div>`;
-      tooltip.innerHTML = `<strong>${item.name}</strong><div>${item.start}${item.type === 'Person' ? '–' + item.end : ''}</div>${extra}`;
-    });
-    itemGroup.addEventListener('mouseleave', () => {
-      tooltip.style.opacity = 0;
-    });
-    itemGroup.addEventListener('click', () => {
-      if (selected && selected.id === item.id) {
-        selected = null;
-        showDefaultDetails();
-      } else {
-        selected = item;
-        showDetails(item);
-      }
-      render();
-    });
-
-    svg.appendChild(itemGroup);
-  });
-}
-
-function showDefaultDetails() {
-  detailTitle.textContent = 'Timeline details';
-  detailYears.textContent = 'Select a person or event on the chart.';
-  detailBody.innerHTML = `
-    <p>This view includes:</p>
-    <ul>
-      <li>a concurrency line at the top showing how many people were active in each year</li>
-      <li>period bands you can toggle on or off</li>
-      <li>click-to-highlight overlaps for individual people</li>
-    </ul>
-    <p>The workbook and CSV files use the same data structure, so all three outputs stay aligned.</p>
-  `;
-}
-
-function showDetails(item) {
-  detailTitle.textContent = item.name;
-  detailYears.textContent = item.type === 'Person'
-    ? `${item.start}–${item.end} • ${item.category}`
-    : `${item.start} • event`;
-
-  if (item.type === 'Person') {
-    const names = item.overlaps_with.length
-      ? '<ul>' + item.overlaps_with.map(n => `<li>${n}</li>`).join('') + '</ul>'
-      : '<p>No contemporaries in the current dataset.</p>';
-    detailBody.innerHTML = `
-      <p><strong>Overlap count:</strong> ${item.overlap_count}</p>
-      <p><strong>Contemporaries in dataset:</strong></p>
-      ${names}
-      ${item.notes ? `<p><strong>Note:</strong> ${item.notes}</p>` : ''}
-    `;
-  } else {
-    detailBody.innerHTML = `
-      <p><strong>Category:</strong> ${item.category}</p>
-      <p>${item.notes || 'Point event from the original timeline.'}</p>
-    `;
-  }
-}
-
-buttons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    buttons.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    activeFilter = btn.dataset.filter;
-    selected = null;
-    showDefaultDetails();
-    render();
-  });
-});
-bandToggle.addEventListener('change', render);
-
-showDefaultDetails();
-render();
 </script>
+
 </body>
 </html>
