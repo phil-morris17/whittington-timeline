@@ -1,4 +1,4 @@
-id,title,start,end,category,type,Notes,group_label,notes,source_pages,source
+id,id,title,start_year,end_year,category,type,notes
 P01,Richard Dixon,1702,1727,Dixon Family,Person,"Early member of the Dixon family, establishing a local presence that would shape Whittington across several generations.",Dixon Family,,2,Old Whittington Local History
 P02,Richard Dixon Jnr,1727,1736,Dixon Family,Person,Continued the family’s local influence during a period of gradual parish development.,Dixon Family,,2,Old Whittington Local History
 P03,William Dixon,1736,1743,Dixon Family,Person,"Part of the Dixon succession, maintaining continuity in landholding and local standing.",Dixon Family,,2,Old Whittington Local History
