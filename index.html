@@ -95,13 +95,37 @@ loadCSV("whittington_timeline_autoload_dataset.csv").then(items=>{
   [1688,1700,1725,1750,1775,1800,1825,1850,1863,1875,1895,1900,1920].forEach(year=>{
     const x=yearToX(year);
     el(svg,"line",{x1:x,y1:top-18,x2:x,y2:chartHeight-bottom,stroke:"#e7dccb"});
-    const t=el(svg,"text",{x:x,y:top-28,"text-anchor":"middle",class:"tick-label"}); t.textContent=year;
-  });
+    const t=el(svg,"text",{-anchor":"middle",class:"tick-label"}); t.textContent=year;
+  });bio.textConten.";
   categories.forEach(cat=>{
     const gy=positions.get("group-"+cat);
     if(gy){ const t=el(svg,"text",{x:18,y:gy+8,class:"group-label"}); t.textContent=cat; }
   });
-  persons.forEach(d=>{
+ persons.forEach(d=>{
+  const barY=positions.get(d.id), x=yearToX(d.start), w=Math.max(16,yearToX(d.end)-x);
+  const rect=el(svg,"rect",{x:x,y:barY,width:w,height:rowH,fill:color(d.category),class:"item-rect"});
+  rect.addEventListener("click",()=>{
+    title.textContent=d.title;
+    meta.textContent=d.start+"–"+d.end+" • "+d.category+" • "+d.type;
+    bio.textContent=d.notes || "No notes available.";
+    svg.querySelectorAll(".item-rect").forEach(r=>r.classList.remove("selected"));
+    rect.classList.add("selected");
+  });
+  const l=el(svg,"text",{x:x+8,y:barY+15,class:"item-label"}); l.textContent=d.title;
+  const yr=el(svg,"text",{x:x+8,y:barY+30,class:"item-years"}); yr.textContent=d.start+"–"+d.end;
+});
+
+events.forEach((e,idx)=>{
+  const x=yearToX(e.start);
+  el(svg,"line",{x1:x,y1:top-18,x2:x,y2:chartHeight-bottom+2,class:"event-line"});
+  const c=el(svg,"circle",{cx:x,cy:top-18,r:6,class:"event-dot"});
+  c.addEventListener("click",()=>{
+    title.textContent=e.title;
+    meta.textContent=e.start+" • "+e.category+" • "+e.type;
+    bio.textContent=e.notes || "No notes available.";
+  });
+  const tx=el(svg,"text",{x:x+8,y:top+idx*20,fill:"#476b8a","font-size":"12"}); tx.textContent=e.title+" ("+e.start+")";
+});.forEach(d=>{
     const barY=positions.get(d.id), x=yearToX(d.start), w=Math.max(16,yearToX(d.end)-x);
     const rect=el(svg,"rect",{x:x,y:barY,width:w,height:rowH,fill:color(d.category),class:"item-rect"});
     rect.addEventListener("click",()=>{
