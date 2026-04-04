@@ -1,0 +1,26 @@
+id,title,start,end,category,type,bio,group_label,notes,source_pages,source
+P01,Richard Dixon,1702,1727,Dixon Family,Person,"Early member of the Dixon family, establishing a local presence that would shape Whittington across several generations.",Dixon Family,,2,Old Whittington Local History
+P02,Richard Dixon Jnr,1727,1736,Dixon Family,Person,Continued the family’s local influence during a period of gradual parish development.,Dixon Family,,2,Old Whittington Local History
+P03,William Dixon,1736,1743,Dixon Family,Person,"Part of the Dixon succession, maintaining continuity in landholding and local standing.",Dixon Family,,2,Old Whittington Local History
+P04,Richard Dixon Jnr 2,1743,1769,Dixon Family,Person,"Represents the later phase of Dixon family influence, overlapping with the arrival of Dr Samuel Pegge.",Dixon Family,,2,Old Whittington Local History
+P05,Dr Samuel Pegge,1751,1796,Parish / Clergy,Person,Rector of Whittington and noted antiquarian. His work preserved important local history and coincided with the later Dixon period.,Parish / Clergy,,2,Old Whittington Local History
+P06,Gilbert Dixon,1769,1777,Dixon Family,Person,"Associated with both local industry and administration, marking a transition from traditional landholding toward broader economic activity.",Dixon Family,,2,Old Whittington Local History
+P07,John Dixon,1777,1816,Dixon Family,Person,"A key late figure in the Dixon line, bridging the eighteenth and nineteenth centuries and overlapping with emerging new parish leadership.",Dixon Family,,2,Old Whittington Local History
+P08,William Beecher,1796,1798,Parish / Clergy,Person,Held a short tenure during a transitional period in parish leadership.,Parish / Clergy,,2-3,Old Whittington Local History
+P09,Sherard Beecher,1798,1812,Parish / Clergy,Person,"Continued the Beecher clerical presence, guiding the parish into the early nineteenth century.",Parish / Clergy,,3,Old Whittington Local History
+P10,George Gordon (the Elder),1812,1816,Parish / Clergy,Person,Part of the clerical transition that followed the decline of the Dixon family’s dominance.,Parish / Clergy,,3,Old Whittington Local History
+P11,George Gordon Jnr,1816,1872,Parish / Clergy,Person,A long-serving clerical figure whose tenure spans major social and industrial change in Whittington.,Parish / Clergy,,3,Old Whittington Local History
+P12,Frederick Swanwick,1837,1885,Local Figures,Person,"Engineer associated with the railway age, contributing to the wider industrial transformation influencing Whittington.",Local Figures,,3,Old Whittington Local History
+P13,Mary Swanwick,1841,1917,Local Figures,Person,"Writer and reformer, reflecting the intellectual and cultural life of the Victorian and Edwardian periods.",Local Figures,,3,Old Whittington Local History
+E02,New Parish Church Built,1863,1863,Events,Event,Marks a major phase of Victorian expansion and investment in the parish.,Events,,3,Old Whittington Local History
+P14,Joseph Syddall,1863,1920,Local Figures,Person,"Artist known for detailed works and local connections, contributing to Whittington’s cultural heritage.",Local Figures,,3,Old Whittington Local History
+P15,George William Botham,1872,1889,Parish / Clergy,Person,Late Victorian parish figure whose years fall within a particularly active period of local overlap.,Parish / Clergy,,3,Old Whittington Local History
+P16,Clement Clover Ward,1889,1891,Parish / Clergy,Person,A short-serving parish figure during a transitional period before the 1895 church fire.,Parish / Clergy,,4,Old Whittington Local History
+P17,George Owen Holt,1891,1896,Parish / Clergy,Person,Active in the years immediately leading up to the destruction of the church by fire.,Parish / Clergy,,4,Old Whittington Local History
+P18,John Tomlinson,1892,1898,Parish / Clergy,Person,His years overlap the destruction of the old church and the rebuilding of its successor.,Parish / Clergy,,4,Old Whittington Local History
+E03,Church Destroyed By Fire,1895,1895,Events,Event,"A defining moment in Whittington’s history, leading to rapid rebuilding.",Events,,4,Old Whittington Local History
+P19,Maurice Deacon,1896,1907,Parish / Clergy,Person,"Rector during the rebuilding period after the 1895 fire, central to parish recovery.",Parish / Clergy,,4,Old Whittington Local History
+E04,Present Church Built,1896,1896,Events,Event,A symbol of resilience and renewal after the 1895 fire.,Events,,4,Old Whittington Local History
+P20,George Ford,1898,1922,Parish / Clergy,Person,"Led the parish into the twentieth century, consolidating the rebuilt church and modern community life.",Parish / Clergy,,4,Old Whittington Local History
+P21,Harry Brearley,1910,1920,Local Figures,Person,"Metallurgist and pioneer of stainless steel, representing the area’s wider industrial legacy.",Local Figures,,4,Old Whittington Local History
+E01,Plotting Of Revolution,1688,1688,Events,Event,The 1688 Revolution provides an early historical anchor point for the wider story of the area.,Events,,2,Old Whittington Local History
