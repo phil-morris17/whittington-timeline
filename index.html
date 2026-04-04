@@ -1,144 +1,420 @@
+
+
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>When They Lived Together — Whittington</title>
-
 <style>
-body {
-  font-family: Georgia, serif;
-  background:#f6f1e8;
-  color:#2f2419;
-  margin:0;
+:root {
+  --bg:#f6f1e8;
+  --paper:#fbf8f2;
+  --ink:#2f2419;
+  --muted:#6d6256;
+  --line:#c8b9a4;
+  --dixon:#badb63;
+  --clergy:#efb15f;
+  --local:#8bd67a;
+  --events:#6ea9df;
+  --band1:rgba(210,178,124,.18);
+  --band2:rgba(137,168,124,.16);
+  --band3:rgba(201,145,108,.16);
+  --shadow:0 10px 30px rgba(0,0,0,.08);
 }
-
-header {
-  padding:20px;
-  text-align:center;
-  background:#e8dfd1;
-  font-size:22px;
-}
-
-.timeline {
-  padding:20px;
-}
-
-.item {
-  padding:12px;
-  margin:12px 0;
-  border-left:5px solid #8c7b6b;
-  cursor:pointer;
-  background:#fffaf4;
-}
-
-.item:hover {
-  background:#f0e6d8;
-}
-
-.popup {
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  background:#fff;
-  border-top:2px solid #8c7b6b;
-  padding:20px;
-  display:none;
-  box-shadow:0 -4px 12px rgba(0,0,0,0.2);
-}
-
-.popup h3 {
-  margin-top:0;
-}
-
-.close {
-  float:right;
-  cursor:pointer;
-  font-size:18px;
-}
+* { box-sizing:border-box; }
+html,body { margin:0; background:var(--bg); color:var(--ink); font-family: Georgia, "Times New Roman", serif; }
+header { padding:20px 18px 10px; text-align:center; background:linear-gradient(to bottom, #e8dfd1, #efe7dc); border-bottom:1px solid var(--line); }
+header h1 { margin:0; font-size:clamp(1.8rem, 2vw + 1rem, 3rem); font-weight:600; }
+header p { margin:.35rem auto 0; max-width:900px; color:var(--muted); font-size:1rem; }
+main { display:grid; grid-template-columns:minmax(0, 1.6fr) minmax(320px, .9fr); gap:18px; padding:16px; max-width:1600px; margin:0 auto; }
+@media (max-width: 980px) { main { grid-template-columns:1fr; } }
+.controls, .panel, .chart-shell { background:var(--paper); border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow); }
+.controls { padding:12px; display:flex; flex-wrap:wrap; gap:10px 12px; align-items:center; margin-bottom:12px; }
+.controls input[type="search"] { min-width:220px; flex:1 1 260px; padding:10px 12px; border:1px solid var(--line); border-radius:12px; background:#fff; font:inherit; }
+.toggle-group { display:flex; gap:8px; flex-wrap:wrap; }
+.toggle-btn { border:1px solid var(--line); background:white; color:var(--ink); padding:9px 12px; border-radius:999px; cursor:pointer; font:inherit; }
+.toggle-btn.active { background:#efe7dc; border-color:#9f8e77; }
+.checks { display:flex; gap:12px; flex-wrap:wrap; color:var(--muted); font-size:.95rem; }
+.checks label { display:flex; gap:6px; align-items:center; }
+.chart-shell { overflow:hidden; }
+.chart-head { padding:12px 14px 0; display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+.chart-head h2 { margin:0; font-size:1.15rem; }
+.chart-head p { margin:.2rem 0 0; color:var(--muted); font-size:.95rem; }
+.legend { display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+.legend span { display:inline-flex; align-items:center; gap:6px; color:var(--muted); font-size:.9rem; }
+.swatch { width:12px; height:12px; border-radius:3px; display:inline-block; }
+.viewport { overflow:auto; border-top:1px solid #e7dccb; margin-top:10px; }
+svg { display:block; width:100%; min-width:980px; background:linear-gradient(to bottom, rgba(255,255,255,.3), rgba(255,255,255,0)); }
+.panel { padding:14px; position:sticky; top:14px; }
+.panel h3 { margin:.1rem 0 .2rem; font-size:1.35rem; }
+.panel .meta { color:var(--muted); margin-bottom:12px; }
+.panel .bio { line-height:1.55; }
+.section { margin-top:14px; padding-top:12px; border-top:1px solid #e7dccb; }
+.badges { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+.badge { background:#efe7dc; border:1px solid var(--line); border-radius:999px; padding:6px 10px; font-size:.9rem; }
+.small { color:var(--muted); font-size:.95rem; }
+.overlap-list { margin:8px 0 0; padding-left:1.1rem; }
+.footer-note { margin-top:12px; color:var(--muted); font-size:.9rem; }
+.empty { color:var(--muted); padding:12px 0 4px; }
+.button-row { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+.button-row button { border:1px solid var(--line); background:#fff; border-radius:10px; padding:8px 12px; font:inherit; cursor:pointer; }
+.tick-label { fill:var(--muted); font-size:13px; }
+.group-label { fill:var(--ink); font-size:15px; font-weight:600; }
+.band-label { fill:#5b493b; font-size:13px; font-weight:600; }
+.item-label { fill:var(--ink); font-size:13px; pointer-events:none; }
+.item-years { fill:#5e5449; font-size:11px; pointer-events:none; }
+.item-rect { stroke:rgba(60,45,30,.18); stroke-width:1; cursor:pointer; rx:8; ry:8; }
+.item-rect.dimmed { opacity:.18; }
+.item-rect.selected { stroke:#3d2a18; stroke-width:2; filter:drop-shadow(0 3px 6px rgba(0,0,0,.15)); }
+.item-rect.overlap { stroke:#3d2a18; stroke-width:1.6; }
+.event-line { stroke:#88a7c4; stroke-width:1.4; }
+.event-dot { fill:var(--events); stroke:white; stroke-width:2; cursor:pointer; }
+.event-label { fill:#476b8a; font-size:12px; }
+.axis-line { stroke:#b8a892; stroke-width:1; }
+.grid-line { stroke:#e7dccb; stroke-width:1; }
+.activity-line { fill:none; stroke:#9a7a53; stroke-width:2.2; }
+.activity-fill { fill:rgba(154,122,83,.11); }
 </style>
 </head>
-
 <body>
-
 <header>
-Whittington History Hub<br>
-<small>When They Lived Together: Overlapping Lives</small>
+  <h1>Whittington History Hub</h1>
+  <p>When They Lived Together: Overlapping Lives in Whittington’s Past. Tap or click a bar to view biography, contemporaries, and overlap context.</p>
 </header>
 
-<div class="timeline">
+<main>
+  <section>
+    <div class="controls">
+      <input id="search" type="search" placeholder="Search names, notes, or events">
+      <div class="toggle-group" id="categoryToggles"></div>
+      <div class="checks">
+        <label><input type="checkbox" id="toggleBands" checked> show period bands</label>
+        <label><input type="checkbox" id="toggleCompact"> compact labels</label>
+        <label><input type="checkbox" id="toggleActivity" checked> show activity curve</label>
+      </div>
+    </div>
 
-<div class="item" onclick="showBio('pegge')">
-<strong>Dr Samuel Pegge (1751–1796)</strong>
-</div>
+    <div class="chart-shell">
+      <div class="chart-head">
+        <div>
+          <h2>Interactive overlap timeline</h2>
+          <p>Peak overlap in this dataset occurs at <strong>5 active people</strong>, especially around the 1870s–1890s.</p>
+        </div>
+        <div class="legend">
+          <span><i class="swatch" style="background:var(--dixon)"></i>Dixon Family</span>
+          <span><i class="swatch" style="background:var(--clergy)"></i>Parish / Clergy</span>
+          <span><i class="swatch" style="background:var(--local)"></i>Local Figures</span>
+          <span><i class="swatch" style="background:var(--events)"></i>Events</span>
+        </div>
+      </div>
+      <div class="viewport">
+        <svg id="chart" viewBox="0 0 1280 960" aria-label="Interactive timeline chart"></svg>
+      </div>
+    </div>
+  </section>
 
-<div class="item" onclick="showBio('dixon')">
-<strong>John Dixon (1777–1816)</strong>
-</div>
+  <aside class="panel">
+    <div class="small">Selected item</div>
+    <h3 id="panelTitle">Choose a bar or event</h3>
+    <div class="meta" id="panelMeta">Filter by category, search, or tap a name to inspect overlap.</div>
+    <div class="bio" id="panelBio">This full version includes timeline bars, biographies, overlap detection, key-period bands, and event markers.</div>
 
-<div class="item" onclick="showBio('gordon')">
-<strong>George Gordon Jnr (1816–1872)</strong>
-</div>
+    <div class="section">
+      <div class="small">Overlap summary</div>
+      <div id="panelOverlap">No item selected.</div>
+    </div>
 
-<div class="item" onclick="showBio('swanwick')">
-<strong>Frederick Swanwick (1837–1885)</strong>
-</div>
+    <div class="section">
+      <div class="small">Contemporaries / related items</div>
+      <ul id="panelList" class="overlap-list"></ul>
+      <div id="panelEmpty" class="empty">Nothing selected yet.</div>
+    </div>
 
-<div class="item" onclick="showBio('syddall')">
-<strong>Joseph Syddall (1863–1920)</strong>
-</div>
+    <div class="section">
+      <div class="small">Period context</div>
+      <div id="panelPeriods">Victorian Transformation and Fire &amp; Reconstruction are the strongest shared periods in the current dataset.</div>
+      <div class="badges" id="panelBadges"></div>
+    </div>
 
-<div class="item" onclick="showBio('brearley')">
-<strong>Harry Brearley (1910–1920)</strong>
-</div>
+    <div class="button-row">
+      <button id="clearBtn" type="button">Clear selection</button>
+      <button id="peakBtn" type="button">Jump to peak era</button>
+    </div>
 
-</div>
-
-<div id="popup" class="popup">
-<span class="close" onclick="hideBio()">✖</span>
-<h3 id="title"></h3>
-<p id="desc"></p>
-</div>
+    <div class="footer-note">Built from the uploaded Old Whittington Local History timeline dataset.</div>
+  </aside>
+</main>
 
 <script>
-function showBio(id) {
-  const bios = {
-    pegge: {
-      title: "Dr Samuel Pegge (1751–1796)",
-      desc: "Rector of Whittington and noted antiquarian. His work preserved important local history and coincided with the later Dixon period."
-    },
-    dixon: {
-      title: "John Dixon (1777–1816)",
-      desc: "A key late figure in the Dixon family, bridging the 18th and 19th centuries and overlapping with emerging new leadership in the parish."
-    },
-    gordon: {
-      title: "George Gordon Jnr (1816–1872)",
-      desc: "A long-serving clerical figure whose tenure spans major social and industrial change in Whittington."
-    },
-    swanwick: {
-      title: "Frederick Swanwick (1837–1885)",
-      desc: "Engineer associated with the railway age, contributing to the wider industrial transformation influencing Whittington."
-    },
-    syddall: {
-      title: "Joseph Syddall (1863–1920)",
-      desc: "Artist known for detailed works and local connections, contributing to Whittington’s cultural heritage."
-    },
-    brearley: {
-      title: "Harry Brearley (1910–1920)",
-      desc: "Metallurgist and pioneer of stainless steel, representing the global industrial legacy connected to the area."
+const items = [{"id": "P01", "title": "Richard Dixon", "start": 1702, "end": 1727, "category": "Dixon Family", "type": "Person", "bio": "Early member of the Dixon family, establishing a local presence that would shape Whittington across several generations."}, {"id": "P02", "title": "Richard Dixon Jnr", "start": 1727, "end": 1736, "category": "Dixon Family", "type": "Person", "bio": "Continued the family’s local influence during a period of gradual parish development."}, {"id": "P03", "title": "William Dixon", "start": 1736, "end": 1743, "category": "Dixon Family", "type": "Person", "bio": "Part of the Dixon succession, maintaining continuity in landholding and local standing."}, {"id": "P04", "title": "Richard Dixon Jnr 2", "start": 1743, "end": 1769, "category": "Dixon Family", "type": "Person", "bio": "Represents the later phase of Dixon family influence, overlapping with the arrival of Dr Samuel Pegge."}, {"id": "P06", "title": "Gilbert Dixon", "start": 1769, "end": 1777, "category": "Dixon Family", "type": "Person", "bio": "Associated with both local industry and administration, marking a transition from traditional landholding toward broader economic activity."}, {"id": "P07", "title": "John Dixon", "start": 1777, "end": 1816, "category": "Dixon Family", "type": "Person", "bio": "A key late figure in the Dixon line, bridging the eighteenth and nineteenth centuries and overlapping with emerging new parish leadership."}, {"id": "P05", "title": "Dr Samuel Pegge", "start": 1751, "end": 1796, "category": "Parish / Clergy", "type": "Person", "bio": "Rector of Whittington and noted antiquarian. His work preserved important local history and coincided with the later Dixon period."}, {"id": "P08", "title": "William Beecher", "start": 1796, "end": 1798, "category": "Parish / Clergy", "type": "Person", "bio": "Held a short tenure during a transitional period in parish leadership."}, {"id": "P09", "title": "Sherard Beecher", "start": 1798, "end": 1812, "category": "Parish / Clergy", "type": "Person", "bio": "Continued the Beecher clerical presence, guiding the parish into the early nineteenth century."}, {"id": "P10", "title": "George Gordon (the Elder)", "start": 1812, "end": 1816, "category": "Parish / Clergy", "type": "Person", "bio": "Part of the clerical transition that followed the decline of the Dixon family’s dominance."}, {"id": "P11", "title": "George Gordon Jnr", "start": 1816, "end": 1872, "category": "Parish / Clergy", "type": "Person", "bio": "A long-serving clerical figure whose tenure spans major social and industrial change in Whittington."}, {"id": "P15", "title": "George William Botham", "start": 1872, "end": 1889, "category": "Parish / Clergy", "type": "Person", "bio": "Late Victorian parish figure whose years fall within a particularly active period of local overlap."}, {"id": "P16", "title": "Clement Clover Ward", "start": 1889, "end": 1891, "category": "Parish / Clergy", "type": "Person", "bio": "A short-serving parish figure during a transitional period before the 1895 church fire."}, {"id": "P17", "title": "George Owen Holt", "start": 1891, "end": 1896, "category": "Parish / Clergy", "type": "Person", "bio": "Active in the years immediately leading up to the destruction of the church by fire."}, {"id": "P18", "title": "John Tomlinson", "start": 1892, "end": 1898, "category": "Parish / Clergy", "type": "Person", "bio": "His years overlap the destruction of the old church and the rebuilding of its successor."}, {"id": "P19", "title": "Maurice Deacon", "start": 1896, "end": 1907, "category": "Parish / Clergy", "type": "Person", "bio": "Rector during the rebuilding period after the 1895 fire, central to parish recovery."}, {"id": "P20", "title": "George Ford", "start": 1898, "end": 1922, "category": "Parish / Clergy", "type": "Person", "bio": "Led the parish into the twentieth century, consolidating the rebuilt church and modern community life."}, {"id": "P12", "title": "Frederick Swanwick", "start": 1837, "end": 1885, "category": "Local Figures", "type": "Person", "bio": "Engineer associated with the railway age, contributing to the wider industrial transformation influencing Whittington."}, {"id": "P13", "title": "Mary Swanwick", "start": 1841, "end": 1917, "category": "Local Figures", "type": "Person", "bio": "Writer and reformer, reflecting the intellectual and cultural life of the Victorian and Edwardian periods."}, {"id": "P14", "title": "Joseph Syddall", "start": 1863, "end": 1920, "category": "Local Figures", "type": "Person", "bio": "Artist known for detailed works and local connections, contributing to Whittington’s cultural heritage."}, {"id": "P21", "title": "Harry Brearley", "start": 1910, "end": 1920, "category": "Local Figures", "type": "Person", "bio": "Metallurgist and pioneer of stainless steel, representing the area’s wider industrial legacy."}, {"id": "E01", "title": "Plotting Of Revolution", "start": 1688, "end": 1688, "category": "Events", "type": "Event", "bio": "The 1688 Revolution provides an early historical anchor point for the wider story of the area."}, {"id": "E02", "title": "New Parish Church Built", "start": 1863, "end": 1863, "category": "Events", "type": "Event", "bio": "Marks a major phase of Victorian expansion and investment in the parish."}, {"id": "E03", "title": "Church Destroyed By Fire", "start": 1895, "end": 1895, "category": "Events", "type": "Event", "bio": "A defining moment in Whittington’s history, leading to rapid rebuilding."}, {"id": "E04", "title": "Present Church Built", "start": 1896, "end": 1896, "category": "Events", "type": "Event", "bio": "A symbol of resilience and renewal after the 1895 fire."}];
+const persons = items.filter(d => d.type === "Person");
+const categories = ["Dixon Family", "Parish / Clergy", "Local Figures", "Events"];
+const catColors = {
+  "Dixon Family":"var(--dixon)",
+  "Parish / Clergy":"var(--clergy)",
+  "Local Figures":"var(--local)",
+  "Events":"var(--events)"
+};
+const bands = [
+  {label:"Dixon–Pegge period", start:1751, end:1777, fill:"var(--band1)"},
+  {label:"Victorian Transformation", start:1863, end:1896, fill:"var(--band2)"},
+  {label:"Fire & Reconstruction", start:1895, end:1907, fill:"var(--band3)"}
+];
+
+const svg = document.getElementById("chart");
+const searchEl = document.getElementById("search");
+const toggleBands = document.getElementById("toggleBands");
+const toggleCompact = document.getElementById("toggleCompact");
+const toggleActivity = document.getElementById("toggleActivity");
+const categoryWrap = document.getElementById("categoryToggles");
+const clearBtn = document.getElementById("clearBtn");
+const peakBtn = document.getElementById("peakBtn");
+
+const panelTitle = document.getElementById("panelTitle");
+const panelMeta = document.getElementById("panelMeta");
+const panelBio = document.getElementById("panelBio");
+const panelOverlap = document.getElementById("panelOverlap");
+const panelList = document.getElementById("panelList");
+const panelEmpty = document.getElementById("panelEmpty");
+const panelPeriods = document.getElementById("panelPeriods");
+const panelBadges = document.getElementById("panelBadges");
+
+let selectedId = null;
+let activeCats = new Set(categories);
+
+categories.forEach(cat => {
+  const btn = document.createElement("button");
+  btn.className = "toggle-btn active";
+  btn.textContent = cat;
+  btn.addEventListener("click", () => {
+    if (activeCats.has(cat)) {
+      activeCats.delete(cat);
+      btn.classList.remove("active");
+    } else {
+      activeCats.add(cat);
+      btn.classList.add("active");
     }
-  };
+    render();
+  });
+  categoryWrap.appendChild(btn);
+});
 
-  document.getElementById("title").innerText = bios[id].title;
-  document.getElementById("desc").innerText = bios[id].desc;
-  document.getElementById("popup").style.display = "block";
+searchEl.addEventListener("input", render);
+toggleBands.addEventListener("change", render);
+toggleCompact.addEventListener("change", render);
+toggleActivity.addEventListener("change", render);
+
+clearBtn.addEventListener("click", () => {
+  selectedId = null;
+  updatePanel();
+  render();
+});
+
+peakBtn.addEventListener("click", () => {
+  selectedId = null;
+  searchEl.value = "";
+  activeCats = new Set(categories);
+  document.querySelectorAll(".toggle-btn").forEach(b => b.classList.add("active"));
+  render();
+  document.querySelector(".viewport").scrollLeft = 640;
+});
+
+function matchesSearch(item, term) {
+  if (!term) return true;
+  const hay = [item.title, item.bio, item.category, item.type].join(" ").toLowerCase();
+  return hay.includes(term);
 }
 
-function hideBio() {
-  document.getElementById("popup").style.display = "none";
+function visibleItems() {
+  const term = searchEl.value.trim().toLowerCase();
+  return items.filter(it => activeCats.has(it.category) && matchesSearch(it, term));
 }
+
+function overlaps(a, b) {
+  return a.start <= b.end && b.start <= a.end;
+}
+
+function getOverlapList(item, pool) {
+  if (!item || item.type !== "Person") return [];
+  return pool.filter(d => d.id !== item.id && d.type === "Person" && overlaps(item, d));
+}
+
+function activeCounts() {
+  const years = [];
+  for (let y = 1688; y <= 1922; y++) {
+    years.push({ year: y, count: persons.filter(p => p.start <= y && p.end >= y).length });
+  }
+  return years;
+}
+
+const activity = activeCounts();
+const maxActivity = Math.max(...activity.map(d => d.count));
+
+function periodBadges(item) {
+  return bands.filter(b => item.start <= b.end && item.end >= b.start).map(b => b.label);
+}
+
+function updatePanel() {
+  const item = items.find(d => d.id === selectedId);
+  panelList.innerHTML = "";
+  panelBadges.innerHTML = "";
+
+  if (!item) {
+    panelTitle.textContent = "Choose a bar or event";
+    panelMeta.textContent = "Filter by category, search, or tap a name to inspect overlap.";
+    panelBio.textContent = "This full version includes timeline bars, biographies, overlap detection, key-period bands, and event markers.";
+    panelOverlap.textContent = "No item selected.";
+    panelPeriods.innerHTML = "Victorian Transformation and Fire &amp; Reconstruction are the strongest shared periods in the current dataset.";
+    panelEmpty.textContent = "Nothing selected yet.";
+    panelEmpty.style.display = "block";
+    return;
+  }
+
+  panelTitle.textContent = item.title;
+  panelMeta.textContent = item.start + "–" + item.end + " • " + item.category + " • " + item.type;
+  panelBio.textContent = item.bio;
+
+  const badges = periodBadges(item);
+  badges.forEach(b => {
+    const span = document.createElement("span");
+    span.className = "badge";
+    span.textContent = b;
+    panelBadges.appendChild(span);
+  });
+
+  if (item.type === "Person") {
+    const overlapsNow = getOverlapList(item, persons);
+    panelOverlap.innerHTML = "<strong>" + overlapsNow.length + "</strong> contemporaries overlap with this person in the current dataset.";
+    if (overlapsNow.length) {
+      overlapsNow.sort((a,b) => a.start - b.start).forEach(p => {
+        const li = document.createElement("li");
+        li.textContent = p.title + " (" + p.start + "–" + p.end + ")";
+        panelList.appendChild(li);
+      });
+      panelEmpty.style.display = "none";
+    } else {
+      panelEmpty.textContent = "No overlapping people in the current filtered view.";
+      panelEmpty.style.display = "block";
+    }
+    panelPeriods.textContent = badges.length ? "This life intersects " + badges.join(" and ") + "." : "This item sits outside the named interpretive bands.";
+  } else {
+    const near = persons.filter(p => p.start <= item.start && p.end >= item.start).sort((a,b) => a.start - b.start);
+    panelOverlap.innerHTML = "<strong>" + near.length + "</strong> people were active in this event year.";
+    if (near.length) {
+      near.forEach(p => {
+        const li = document.createElement("li");
+        li.textContent = p.title + " (" + p.start + "–" + p.end + ")";
+        panelList.appendChild(li);
+      });
+      panelEmpty.style.display = "none";
+    } else {
+      panelEmpty.textContent = "No active people found for this event year.";
+      panelEmpty.style.display = "block";
+    }
+    panelPeriods.textContent = badges.length ? "This event falls within " + badges.join(" and ") + "." : "This event is outside the named interpretive bands.";
+  }
+}
+
+function el(name, attrs, parent) {
+  const node = document.createElementNS("http://www.w3.org/2000/svg", name);
+  Object.entries(attrs || {}).forEach(([k,v]) => node.setAttribute(k, v));
+  (parent || svg).appendChild(node);
+  return node;
+}
+
+function render() {
+  svg.innerHTML = "";
+  const width = 1280, left = 120, right = 40, top = 96, bottom = 54;
+  const yearMin = 1680, yearMax = 1925;
+  const innerW = width - left - right;
+  const yearToX = y => left + ((y - yearMin) / (yearMax - yearMin)) * innerW;
+
+  const filtered = visibleItems();
+  const filteredPersons = filtered.filter(d => d.type === "Person");
+  const filteredEvents = filtered.filter(d => d.type === "Event");
+
+  const rowH = 38, rowGap = 12, groupGap = 34;
+  const positions = new Map();
+  let y = top + 80;
+
+  categories.filter(c => c !== "Events").forEach(cat => {
+    const catItems = filteredPersons.filter(d => d.category === cat).sort((a,b) => a.start - b.start);
+    if (!catItems.length) return;
+    positions.set("group-" + cat, y);
+    catItems.forEach((d, i) => positions.set(d.id, y + 22 + i * (rowH + rowGap)));
+    y += 22 + catItems.length * (rowH + rowGap) + groupGap;
+  });
+
+  const chartHeight = Math.max(y + 60, 880);
+  svg.setAttribute("viewBox", "0 0 " + width + " " + chartHeight);
+
+  el("rect", {x:0,y:0,width:width,height:chartHeight,fill:"transparent"});
+
+  if (toggleActivity.checked) {
+    const axTop = 26, axH = 46;
+    let path = "";
+    let fill = "M " + yearToX(activity[0].year) + " " + (axTop + axH) + " ";
+    activity.forEach((d, idx) => {
+      const x = yearToX(d.year);
+      const yy = axTop + axH - (d.count / maxActivity) * axH;
+      path += (idx ? " L " : "M ") + x + " " + yy;
+      fill += "L " + x + " " + yy + " ";
+    });
+    fill += "L " + yearToX(activity[activity.length-1].year) + " " + (axTop + axH) + " Z";
+    el("path", {d:fill, class:"activity-fill"});
+    el("path", {d:path, class:"activity-line"});
+    el("text", {x:left, y:22, class:"tick-label"}).textContent = "activity curve";
+  }
+
+  if (toggleBands.checked) {
+    bands.forEach((b, idx) => {
+      const x = yearToX(b.start), w = yearToX(b.end) - x;
+      el("rect", {x:x, y:top+6, width:w, height:chartHeight-top-bottom, fill:b.fill});
+      el("text", {x:x+8, y:top+22 + idx*16, class:"band-label"}).textContent = b.label;
+    });
+  }
+
+  [1688,1700,1725,1750,1775,1800,1825,1850,1863,1875,1895,1900,1920].forEach(year => {
+    const x = yearToX(year);
+    el("line", {x1:x,y1:top-18,x2:x,y2:chartHeight-bottom,class:"grid-line"});
+    el("text", {x:x,y:top-28,class:"tick-label","text-anchor":"middle"}).textContent = year;
+  });
+  el("line", {x1:left,y1:top-18,x2:width-right,y2:top-18,class:"axis-line"});
+
+  categories.filter(c => c !== "Events").forEach(cat => {
+    const gy = positions.get("group-" + cat);
+    if (gy) el("text", {x:18, y:gy+8, class:"group-label"}).textContent = cat;
+  });
+
+  const selected = items.find(d => d.id === selectedId);
+  const overlapIds = new Set(selected && selected.type === "Person" ? getOverlapList(selected, persons).map(d => d.id) : []);
+
+  filteredPersons.forEach(d => {
+    const barY = positions.get(d.id);
+    const x = yearToX(d.start), w = Math.max(16, yearToX(d.end) - x);
+    const rect = el("rect", {x:x,y:barY,width:w,height:rowH,fill:catColors[d.category],class:"item-rect"});
+    const selectedMatch = selectedId === d.id;
+    if (selected && !selectedMatch && !overlapIds.has(d.id)) rect.classList.add("dimmed");
+    if (selectedMatch) rect.classList.add("selected");
+    if (!selectedMatch && overlapIds.has(d.id)) rect.classList.add("overlap");
+    rect.addEventListener("click", () => { selectedId = d.id; updatePanel(); render(); });
+    el("text", {x:x+8,y:barY+15,class:"item-label"}).textContent = (toggleCompact.checked && w < 120) ? d.title.split(" ")[0] : d.title;
+    el("text", {x:x+8,y:barY+30,class:"item-years"}).textContent = d.start + "–" + d.end;
+  });
+
+  filteredEvents.forEach((e, idx) => {
+    const x = yearToX(e.start);
+    el("line", {x1:x,y1:top-18,x2:x,y2:chartHeight-bottom+2,class:"event-line"});
+    const circ = el("circle", {cx:x, cy:top-18, r:6, class:"event-dot"});
+    circ.addEventListener("click", () => { selectedId = e.id; updatePanel(); render(); });
+    el("text", {x:x+8, y:top + idx*20, class:"event-label"}).textContent = e.title + " (" + e.start + ")";
+  });
+
+  updatePanel();
+}
+
+render();
 </script>
-
 </body>
 </html>
