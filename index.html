@@ -2,133 +2,280 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Whittington Timeline (CSV Auto-load)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="A searchable timeline of Whittington parish, Chesterfield, from Domesday to today, set beside events in Britain and the world.">
+<title>Whittington Parish Timeline</title>
 <style>
-:root{--bg:#f6f1e8;--paper:#fbf8f2;--ink:#2f2419;--muted:#6d6256;--line:#c8b9a4;--dixon:#badb63;--clergy:#efb15f;--local:#8bd67a;--events:#6ea9df}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,"Times New Roman",serif}
-header{padding:18px;text-align:center;background:#e8dfd1;border-bottom:1px solid var(--line)}
-main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(320px,.9fr);gap:18px;padding:16px;max-width:1600px;margin:0 auto}
-@media (max-width:980px){main{grid-template-columns:1fr}} .box{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:14px}
-.viewport{overflow:auto;border-top:1px solid #e7dccb;margin-top:10px} svg{display:block;width:100%;min-width:980px}
-.item-rect{stroke:rgba(60,45,30,.18);stroke-width:1;cursor:pointer}.item-rect.selected{stroke:#3d2a18;stroke-width:2}
-.item-label{font-size:13px;pointer-events:none}.item-years{font-size:11px;pointer-events:none;fill:#5e5449}
-.group-label{font-size:15px;font-weight:600}.tick-label{font-size:12px;fill:#6d6256}
-.event-line{stroke:#88a7c4;stroke-width:1.4}.event-dot{fill:var(--events);stroke:#fff;stroke-width:2}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+/* Layout: a single parish register — era bands down a central spine, each entry dated in the margin like a register line, filters pinned above. */
+:root{
+  --bg:#ffffff; --paper:#ffffff; --ink:#1d2326; --muted:#4f5a66; --rule:#c5d3e3;
+  --accent:#2E5496; --accent-ink:#ffffff; --chip:#D6E4F0; --deep:#1F3864; --light:#D6E4F0; --heading:#1F3864;
+  --c-manor:#8a5a1c; --c-revolution:#a12f2f; --c-church:#3d4f8f; --c-people:#1e6b55;
+  --c-industry:#5c5f63; --c-newwhitt:#7a4d8c; --c-buildings:#9a6b3f; --c-civic:#2e6f8e;
+  --c-social:#b0631d; --c-war:#6b1f2a; --c-national:#7d8589; --c-whhg:#1e5f6b;
+  --warn-bg:#f6efdc; --warn-rule:#d9c48e;
+  --ctx-bg:#D6E4F0; --ctx-rule:#2E5496; --ctx-label:#1F3864;
+  --f-display:Georgia,"Times New Roman",serif;
+  --f-body:Georgia,"Times New Roman",serif;
+  --f-data:Arial,Helvetica,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111a2b; --paper:#16223a; --ink:#e6ecf4; --muted:#a3b1c4; --rule:#2c3d5c;
+  --accent:#8fb0e6; --accent-ink:#0d1526; --chip:#22314f; --deep:#0b1424; --light:#22314f; --heading:#e6ecf4;
+  --c-manor:#d9a35c; --c-revolution:#e57a7a; --c-church:#8fa1e3; --c-people:#62c4a3;
+  --c-industry:#a9adb1; --c-newwhitt:#c495d6; --c-buildings:#d6a679; --c-civic:#73b6d6;
+  --c-social:#eba268; --c-war:#d97a88; --c-national:#9aa3a7; --c-whhg:#6fb8c4;
+  --warn-bg:#2a2617; --warn-rule:#6b5c2c; --ctx-bg:#1b2a47; --ctx-rule:#5d7fbf; --ctx-label:#c9d8f0; color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#111a2b; --paper:#16223a; --ink:#e6ecf4; --muted:#a3b1c4; --rule:#2c3d5c;
+  --accent:#8fb0e6; --accent-ink:#0d1526; --chip:#22314f; --deep:#0b1424; --light:#22314f; --heading:#e6ecf4;
+  --c-manor:#d9a35c; --c-revolution:#e57a7a; --c-church:#8fa1e3; --c-people:#62c4a3;
+  --c-industry:#a9adb1; --c-newwhitt:#c495d6; --c-buildings:#d6a679; --c-civic:#73b6d6;
+  --c-social:#eba268; --c-war:#d97a88; --c-national:#9aa3a7; --c-whhg:#6fb8c4;
+  --warn-bg:#2a2617; --warn-rule:#6b5c2c; --ctx-bg:#1b2a47; --ctx-rule:#5d7fbf; --ctx-label:#c9d8f0; color-scheme:dark;}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:860px;margin:0 auto;padding-block:0 64px}
+header{background:var(--deep);color:#fff;margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px))) 0 calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:36px max(16px,env(safe-area-inset-left,0px)) 30px}
+header .inner{max-width:860px;margin:0 auto}
+header h1{color:#fff;font-family:var(--f-display);font-weight:800;font-size:clamp(2.1rem,6vw,3.3rem);line-height:1.05;margin:0 0 10px;text-wrap:balance;letter-spacing:-.01em}
+.kicker{font-family:var(--f-data);font-weight:700;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:#D6E4F0;margin:0 0 10px}
+.lede{max-width:62ch;color:#D6E4F0;margin:0 0 6px}
+.lede strong{color:#fff;font-weight:700}
+.lede a{color:#fff}
+
+.controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:14px 12px;margin-top:22px;border-bottom:1px solid var(--rule);display:grid;gap:10px}
+.searchrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#q{flex:1 1 220px;min-width:0;font:inherit;font-size:1rem;padding:9px 12px;border:1px solid var(--rule);border-radius:6px;background:var(--paper);color:var(--ink)}
+#q:focus-visible,.chip:focus-visible,.era-link:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.count{font-family:var(--f-data);font-size:.8rem;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
+.chip{flex:0 0 auto;font:inherit;font-size:.86rem;display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);cursor:pointer}
+.chip .dot{width:9px;height:9px;border-radius:50%;background:var(--cc)}
+.chip .n{font-family:var(--f-data);font-size:.72rem;color:var(--muted)}
+.chip[aria-pressed="false"]{opacity:.45;background:transparent}
+.chip.all{font-weight:700}
+.eras{display:flex;gap:4px;overflow-x:auto}
+.era-link{flex:0 0 auto;font-family:var(--f-data);font-size:.74rem;color:var(--muted);text-decoration:none;padding:3px 8px;border-radius:4px;background:var(--chip);white-space:nowrap}
+.era-link:hover{color:var(--ink)}
+
+.era{margin-top:40px;scroll-margin-top:190px}
+.era-head{display:grid;gap:2px;margin-bottom:14px}
+.era-range{font-family:var(--f-data);font-size:.78rem;color:var(--accent);letter-spacing:.06em}
+.era-head h2{color:var(--heading);font-family:var(--f-display);font-weight:700;font-size:1.65rem;margin:0;text-wrap:balance}
+.era-head p{margin:0;color:var(--muted);max-width:62ch}
+
+ol.events{list-style:none;margin:0;padding:0;border-left:2px solid var(--rule);margin-left:6.2rem}
+.ev{position:relative;padding:0 0 18px 20px}
+.ev::before{content:"";position:absolute;left:-7px;top:.45em;width:12px;height:12px;border-radius:50%;background:var(--paper);border:3px solid var(--cc)}
+.ev .date{position:absolute;right:calc(100% + 18px);top:.15em;width:5.6rem;text-align:right;font-family:var(--f-data);font-size:.78rem;line-height:1.35;color:var(--muted);font-variant-numeric:tabular-nums}
+.ev .date b{display:block;font-size:1.02rem;color:var(--ink);font-weight:500}
+.ev h3{color:var(--heading);font-family:var(--f-display);font-weight:700;font-size:1.13rem;margin:0 0 2px;line-height:1.25}
+.ev p{margin:0;max-width:62ch}
+.meta{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:4px;font-size:.82rem}
+.tag{color:var(--cc);font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:.72rem}
+.meta a{color:var(--muted);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:3px}
+.meta a:hover{color:var(--accent)}
+mark{background:color-mix(in srgb,var(--accent) 25%,transparent);color:inherit;border-radius:2px}
+.empty{padding:40px 0;color:var(--muted);text-align:center}
+
+.notes{margin-top:56px;background:var(--light);border:none;border-radius:8px;padding:18px 20px}
+.notes h2{color:var(--heading);font-family:var(--f-display);font-size:1.35rem;margin:0 0 4px}
+.notes>p{margin:0 0 10px;max-width:62ch}
+.notes ul{font-size:.85rem}
+.notes ul{margin:0;padding-left:20px;display:grid;gap:6px}
+.notes li{max-width:70ch}
+.notes a{color:inherit}
+footer{margin-top:28px;font-size:.85rem;color:var(--muted)}
+footer a{color:inherit}
+
+@media (max-width:560px){
+  ol.events{margin-left:0;border-left:none}
+  .ev{padding:0 0 18px 14px;border-left:3px solid var(--cc)}
+  .ev::before{display:none}
+  .ev .date{position:static;width:auto;text-align:left;margin-bottom:2px}
+  .ev .date b{display:inline;margin-right:6px}
+}
+
+.ctx{position:relative;margin:2px 0 20px 20px;padding:12px 14px;border-radius:8px;background:var(--ctx-bg);border:1px dashed var(--ctx-rule);max-width:62ch}
+.ctx::before{content:"";position:absolute;left:-29px;top:20px;width:28px;border-top:1px dashed var(--ctx-rule)}
+.ctx .date{position:absolute;right:calc(100% + 38px);top:12px;width:5.6rem;text-align:right;font-family:var(--f-data);font-size:.78rem;line-height:1.35;color:var(--muted)}
+.ctx .date b{display:block;font-size:1.02rem;color:var(--muted);font-weight:500}
+.ctx .where{font-family:var(--f-data);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ctx-label);margin:0 0 3px}
+.ctx h3{font-family:var(--f-display);font-style:italic;font-weight:500;font-size:1.13rem;margin:0 0 2px}
+.ctx p{margin:0}
+.ctx .tie{margin-top:6px;font-size:.92rem;color:var(--accent)}
+.ctx .tie::before{content:"In Whittington: ";font-weight:700}
+.ctx figure{margin:10px 0 0}
+.ctx figure img{display:block;width:100%;max-width:100%;height:auto;border-radius:4px;filter:sepia(.15)}
+.ctx figcaption{font-size:.76rem;color:var(--muted);margin-top:4px}
+.ctx figcaption a{color:inherit}
+.chip.ctxchip{border-style:dashed}
+@media (max-width:560px){
+  .ctx{margin-left:0}
+  .ctx::before{display:none}
+  .ctx .date{position:static;width:auto;text-align:left;margin-bottom:2px}
+  .ctx .date b{display:inline;margin-right:6px}
+}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 </style>
 </head>
 <body>
-<header>
-<h1 style="margin:0">Whittington History Hub</h1>
-<p style="margin:.35rem 0 0;color:var(--muted)">This version reads its data from a CSV file in the same GitHub folder.</p>
-</header>
-<main>
-<section class="box">
-<strong>Timeline</strong>
-<div class="viewport"><svg id="chart" viewBox="0 0 1280 900"></svg></div>
-</section>
-<aside class="box">
-<div style="color:var(--muted);font-size:.95rem">Selected item</div>
-<h3 id="title" style="margin:.2rem 0">Click a bar or event</h3>
-<div id="meta" style="color:var(--muted);margin-bottom:12px">The page is reading data from whittington_timeline_autoload_dataset.csv</div>
-<div id="bio">Click a bar or event to show its notes here.</div>
-</aside>
-</main>
-<script>
-async function loadCSV(url){
-  const res = await fetch(url);
-  const text = await res.text();
-  const lines = text.trim().split(/\r?\n/);
-  const headers = parseCSVLine(lines[0]);
-  return lines.slice(1).map(line => {
-    const values = parseCSVLine(line);
-    const obj = {};
-    headers.forEach((h,i)=>obj[h]=values[i] ?? "");
-    obj.start = +obj.start; obj.end = +obj.end;
-    return obj;
-  });
-}
-function parseCSVLine(line){
-  const out=[]; let cur=""; let q=false;
-  for(let i=0;i<line.length;i++){
-    const ch=line[i];
-    if(ch === '"'){ if(q && line[i+1] === '"'){ cur += '"'; i++; } else { q = !q; } }
-    else if(ch === ',' && !q){ out.push(cur); cur=""; }
-    else { cur += ch; }
-  }
-  out.push(cur); return out;
-}
-function color(cat){
-  const css = getComputedStyle(document.documentElement);
-  if(cat==="Dixon Family") return css.getPropertyValue('--dixon');
-  if(cat==="Parish / Clergy") return css.getPropertyValue('--clergy');
-  if(cat==="Local Figures") return css.getPropertyValue('--local');
-  return css.getPropertyValue('--events');
-}
-function el(svg,name,attrs){
-  const n=document.createElementNS("http://www.w3.org/2000/svg",name);
-  Object.entries(attrs||{}).forEach(([k,v])=>n.setAttribute(k,v));
-  svg.appendChild(n); return n;
-}
-loadCSV("whittington_timeline_autoload_dataset.csv").then(items=>{
-  const svg=document.getElementById("chart");
-  const title=document.getElementById("title");
-  const meta=document.getElementById("meta");
-  const bio=document.getElementById("bio");
-  const width=1280,left=120,right=40,top=96,bottom=54,yearMin=1680,yearMax=1925,innerW=width-left-right;
-  const yearToX = y => left + ((y-yearMin)/(yearMax-yearMin))*innerW;
-  const categories=["Dixon Family","Parish / Clergy","Local Figures"];
-  const persons=items.filter(d=>d.type==="Person");
-  const events=items.filter(d=>d.type==="Event");
-  const rowH=38,rowGap=12,groupGap=34;
-  const positions=new Map();
-  let y=top+60;
-  categories.forEach(cat=>{
-    const catItems=persons.filter(d=>d.category===cat).sort((a,b)=>a.start-b.start);
-    if(!catItems.length) return;
-    positions.set("group-"+cat,y);
-    catItems.forEach((d,i)=>positions.set(d.id,y+22+i*(rowH+rowGap)));
-    y += 22 + catItems.length*(rowH+rowGap) + groupGap;
-  });
-  const chartHeight=Math.max(y+60,880);
-  svg.setAttribute("viewBox","0 0 "+width+" "+chartHeight);
-  [1688,1700,1725,1750,1775,1800,1825,1850,1863,1875,1895,1900,1920].forEach(year=>{
-    const x=yearToX(year);
-    el(svg,"line",{x1:x,y1:top-18,x2:x,y2:chartHeight-bottom,stroke:"#e7dccb"});
-    const t=el(svg,"text",{x:x,y:top-30,"text-anchor":"middle",class:"tick-label"}); t.textContent=year;
-  });
-  categories.forEach(cat=>{
-    const gy=positions.get("group-"+cat);
-    if(gy){ const t=el(svg,"text",{x:18,y:gy+8,class:"group-label"}); t.textContent=cat; }
-  });
-  persons.forEach(d=>{
-    const barY=positions.get(d.id), x=yearToX(d.start), w=Math.max(16,yearToX(d.end)-x);
-    const rect=el(svg,"rect",{x:x,y:barY,width:w,height:rowH,fill:color(d.category),class:"item-rect"});
-    rect.addEventListener("click",()=>{
-      title.textContent=d.title;
-      meta.textContent=d.start+"–"+d.end+" • "+d.category+" • "+d.type;
-      bio.textContent=d.notes || "No notes available.";
-      svg.querySelectorAll(".item-rect").forEach(r=>r.classList.remove("selected"));
-      rect.classList.add("selected");
-    });
-    const l=el(svg,"text",{x:x+8,y:barY+15,class:"item-label"}); l.textContent=d.title;
-    const yr=el(svg,"text",{x:x+8,y:barY+30,class:"item-years"}); yr.textContent=d.start+"–"+d.end;
-  });
 
-  events.forEach((e,idx)=>{
-    const x=yearToX(e.start);
-    el(svg,"line",{x1:x,y1:top-18,x2:x,y2:chartHeight-bottom+2,class:"event-line"});
-    const c=el(svg,"circle",{cx:x,cy:top-18,r:6,class:"event-dot"});
-    c.addEventListener("click",()=>{
-      title.textContent=e.title;
-      meta.textContent=e.start+" • "+e.category+" • "+e.type;
-      bio.textContent=e.notes || "No notes available.";
-    });
-    const tx=el(svg,"text",{x:x+8,y:top+idx*20,fill:"#476b8a","font-size":"12"}); tx.textContent=e.title+" ("+e.start+")";
+<header><div class="inner">
+    <p class="kicker">Whittington History &amp; Heritage Group</p>
+    <h1>Whittington Parish Timeline</h1>
+    <p class="lede">Every dated event recorded on <strong>whittingtonhistory.org</strong>, from Domesday to the present, gathered into one register. Each entry links back to the page it came from. Shaded panels set the parish beside what was happening in Derbyshire, Britain and the wider world.</p>
+  </div></header>
+<div class="wrap">
+
+  <div class="controls" role="search">
+    <div class="searchrow">
+      <input id="q" type="search" placeholder="Search people, places, years…" aria-label="Search the timeline">
+      <span class="count" id="count" aria-live="polite"></span>
+    </div>
+    <div class="chips" id="chips" aria-label="Filter by theme"></div>
+    <nav class="eras" id="eranav" aria-label="Jump to period"></nav>
+  </div>
+
+  <main id="timeline"></main>
+
+  <section class="notes" aria-labelledby="more-h">
+    <h2 id="more-h">More from Whittington</h2>
+    <p>See who was alive at the same time on our <a href="whittington_full_interactive_timeline_with_biographies.html" target="_blank" rel="noopener">When They Lived Together</a> timeline, or search the <a href="https://whittingtonhistory.org/burials-st-bartholomews-old-whittington/" target="_blank" rel="noopener">St Bartholomew’s burial records</a>. Spotted a mistake, or have a memory or photograph to share? Contact us through <a href="https://whittingtonhistory.org/about-and-contact-details/" target="_blank" rel="noopener">whittingtonhistory.org</a>.</p>
+    <h2 id="credits-h" style="margin-top:14px">Picture credits</h2>
+    <ul id="credits"></ul>
+  </section>
+
+  <footer>Whittington History &amp; Heritage Group · Compiled from whittingtonhistory.org, October 2026. Entries are summaries; the linked article is the authority.</footer>
+</div>
+
+<script src="data/timeline-data.js"></script>
+<script>
+const BASE = "https://whittingtonhistory.org/";
+const CATS = {
+  manor:{label:"Manor & land"}, revolution:{label:"Revolution House"}, church:{label:"Church & chapels"},
+  people:{label:"People"}, industry:{label:"Industry"}, newwhitt:{label:"New Whittington"},
+  buildings:{label:"Houses & buildings"}, civic:{label:"Local government"}, social:{label:"Pubs & racing"},
+  war:{label:"War"}, national:{label:"National context"}, whhg:{label:"WHHG"}
+};
+const PAGES = {
+ "bell-ringers-2":"Bell Ringers, Part Two","bell-ringing":"Bell Ringing History","burials-st-bartholomews-old-whittington":"Burial Records",
+ "buried-in-woollen":"Buried in Woollen","churches-and-chapels":"Churches & Chapels","john-morton-clayton":"John Morton Clayton",
+ "joseph-brotherton-pioneer-of-reform-and-vegetarianism":"Joseph Brotherton","joseph-syddall-from-whittington-to-royal-academy-fame":"Joseph Syddall",
+ "life-and-legacy-of-frederick-swanwick-a-pioneer-engineer":"Frederick Swanwick","lords-of-the-manor":"Landowners",
+ "martha-brotherton-nee-harvey":"Martha Brotherton","new-whittington-baptist-church":"New Whittington Baptist Church",
+ "new-whittingtons-high-street":"New Whittington's High Street","notable-properties-their-owners":"Notable Residences",
+ "pubs-of-whittington":"Pubs of Whittington","remembering-maurice-deacon-church-warden-and-engineer":"Maurice Deacon",
+ "rev-harold-nelson-burden":"Rev. Harold Nelson Burden","revolution-house-2":"Revolution House","samuel-pegges-derbicisms":"Pegge's Derbicisms",
+ "st-bartholomews-churchyard-development":"Churchyard Development","the-chesterfield-racecourse-whittington-moor":"Chesterfield Racecourse",
+ "the-church-of-1863":"The Church of 1863","the-civil-development-of-whittington-new-whittington":"Civil Development",
+ "the-dixon-family":"The Dixon Family","the-fire-of-1895":"The Fire of 1895","the-fowler-family":"The Fowler Family",
+ "the-legacy-of-francis-davenport-a-quakers-journey-to-america":"Francis Davenport","the-legacy-of-hugh-oswald-short-pioneer-in-aeronautics":"Hugh Oswald Short",
+ "the-legacy-of-samuel-pegge-clergyman-and-scholar":"Samuel Pegge","the-life-and-legacy-of-harry-brearley-inventor-of-stainless-steel":"Harry Brearley",
+ "the-norman-church":"The Norman Church","the-pubs-of-whittington-moor":"Pubs of Whittington Moor",
+ "the-rise-and-fall-of-dixons-glasshouse-a-historical-insight":"Dixon's Glasshouse","the-webster-legacy-a-family-bound-to-whittington-by-faith-and-fortune":"The Webster Family",
+ "whittington-hall":"Whittington Hall","whittington-mills":"Whittington Mills","william-hardy-a-legacy-in-brickmaking-and-family-history":"William Hardy","william-parker":"William Parker"
+};
+const ERAS = [
+ {id:"medieval",from:0,to:1599,range:"1086 – 1599",title:"Domesday to the Tudors",
+  blurb:"A manor passed between distant lords, and a small chapel grew into a parish church with its own bell."},
+ {id:"stuart",from:1600,to:1749,range:"1600 – 1749",title:"Freeholders, Quakers and the Revolution",
+  blurb:"Whittington becomes its own parish, the Websters endow its school, and a storm drives three earls into the Cock and Pynot."},
+ {id:"georgian",from:1750,to:1849,range:"1750 – 1849",title:"Pegge's parish and the Dixon glasshouse",
+  blurb:"Forty-five years of Samuel Pegge, the Revolution centenary, canal, glass and coal, and a new Hall."},
+ {id:"victorian",from:1850,to:1913,range:"1850 – 1913",title:"Coal, iron and a new village",
+  blurb:"Sheepbridge ironworks, the sudden growth of New Whittington, two new churches and a fire."},
+ {id:"modern",from:1914,to:9999,range:"1914 – today",title:"Wars and the modern parish",
+  blurb:"Two world wars, absorption into Chesterfield, demolitions, and the work of remembering."}
+];
+
+const state = {q:"", off:new Set(), ctx:true};
+const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const cc = c => `var(--c-${c})`;
+
+function hl(text){
+  const t = esc(text); if(!state.q) return t;
+  const q = state.q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+  return t.replace(new RegExp(`(${q})`,"gi"),"<mark>$1</mark>");
+}
+function match(e){
+  if(state.off.has(e.c)) return false;
+  if(!state.q) return true;
+  const hay = (e.d+" "+e.t+" "+e.x+" "+(PAGES[e.s]||"")).toLowerCase();
+  return hay.includes(state.q.toLowerCase());
+}
+function matchCtx(e){
+  if(!state.ctx) return false;
+  if(!state.q) return true;
+  return (e.d+" "+e.t+" "+e.x+" "+e.tie+" "+e.w).toLowerCase().includes(state.q.toLowerCase());
+}
+function ctxCard(e){
+  const im = IMAGES[e.t];
+  const fig = im ? `<figure><img src="${im.src}" alt="${esc(im.caption)}" loading="lazy" width="${im.w}" height="${im.h}"><figcaption>${esc(im.caption)}. <a href="${im.page}" target="_blank" rel="noopener">${esc(im.credit)}</a></figcaption></figure>` : "";
+  const where = e.w==="World"?"Meanwhile in the world":e.w==="Derbyshire"?"Meanwhile in Derbyshire":"Meanwhile in Britain";
+  return `<li class="ctx"><div class="date">${splitDate(e.d)}</div><p class="where">${where}</p><h3>${hl(e.t)}</h3><p>${hl(e.x)}</p>${e.tie?`<p class="tie">${hl(e.tie)}</p>`:""}${fig}</li>`;
+}
+function splitDate(d){ // bold the year part
+  const m = d.match(/^(.*?)(\d{3,4}(?:s)?(?:[–-]\d{2,4}s?)?)(.*)$/);
+  if(!m) return `<b>${esc(d)}</b>`;
+  const pre = (m[1]+m[3]).trim();
+  return `<b>${esc(m[2])}</b>${pre?esc(pre):""}`;
+}
+
+function renderChips(){
+  const counts = {}; EVENTS.forEach(e=>counts[e.c]=(counts[e.c]||0)+1);
+  const box = document.getElementById("chips");
+  const all = `<button class="chip all" id="chip-all" type="button" aria-pressed="${state.off.size===0}">All themes</button>`;
+  box.innerHTML = all + `<button class="chip ctxchip" id="chip-ctx" type="button" aria-pressed="${state.ctx}">Britain &amp; world<span class="n">${CONTEXT.length}</span></button>` + Object.keys(CATS).filter(k=>counts[k]).map(k=>
+    `<button class="chip" id="chip-${k}" type="button" data-c="${k}" style="--cc:${cc(k)}" aria-pressed="${!state.off.has(k)}"><span class="dot"></span>${CATS[k].label}<span class="n">${counts[k]}</span></button>`).join("");
+}
+function render(){
+  const list = EVENTS.filter(match);
+  const nc = CONTEXT.filter(matchCtx).length;
+  document.getElementById("count").textContent = `${list.length} of ${EVENTS.length} local events` + (state.ctx?` · ${nc} national`:"");
+  const main = document.getElementById("timeline");
+  const nav = document.getElementById("eranav");
+  let html="", navh="";
+  ERAS.forEach(era=>{
+    const loc = list.filter(e=>e.y>=era.from && e.y<=era.to).map(e=>({k:"l",y:e.y,e}));
+    const cx = CONTEXT.filter(matchCtx).filter(e=>e.y>=era.from && e.y<=era.to).map(e=>({k:"c",y:e.y+0.001,e}));
+    const items = loc.concat(cx).sort((a,b)=>a.y-b.y);
+    if(!items.length) return;
+    navh += `<a class="era-link" href="#${era.id}">${era.range.replace(" – ","–")} · ${items.length}</a>`;
+    html += `<section class="era" id="${era.id}"><div class="era-head"><span class="era-range">${era.range}</span><h2>${era.title}</h2><p>${era.blurb}</p></div><ol class="events">` +
+      items.map(it=>it.k==="c"?ctxCard(it.e):(e=>`<li class="ev" style="--cc:${cc(e.c)}"><div class="date">${splitDate(e.d)}</div><h3>${hl(e.t)}</h3><p>${hl(e.x)}</p><div class="meta"><span class="tag">${CATS[e.c].label}</span><a href="${BASE}${e.s}/" target="_blank" rel="noopener">${esc(PAGES[e.s]||e.s)} ↗</a></div></li>`)(it.e)).join("") +
+      `</ol></section>`;
   });
-}).catch(err=>{
-  document.getElementById("bio").textContent = "CSV load failed. Keep the HTML and CSV in the same GitHub folder. Error: " + err;
+  main.innerHTML = html || `<p class="empty">No events match. Try a different word or switch some themes back on.</p>`;
+  nav.innerHTML = navh;
+}
+document.getElementById("chips").addEventListener("click", ev=>{
+  const b = ev.target.closest(".chip"); if(!b) return;
+  if(b.id==="chip-ctx"){ state.ctx=!state.ctx; }
+  else if(b.id==="chip-all"){ state.off.clear(); }
+  else {
+    const c=b.dataset.c;
+    // first click from "all on" isolates that theme
+    if(state.off.size===0){ Object.keys(CATS).forEach(k=>{ if(k!==c) state.off.add(k); }); }
+    else if(state.off.has(c)) state.off.delete(c); else state.off.add(c);
+    if(state.off.size===Object.keys(CATS).length) state.off.clear();
+  }
+  renderChips(); render();
 });
+document.getElementById("q").addEventListener("input", e=>{ state.q=e.target.value.trim(); render(); });
+
+document.getElementById("credits").innerHTML = Object.entries(IMAGES).map(([k,im])=>`<li>${esc(im.caption)}: <a href="${im.page}" target="_blank" rel="noopener">${esc(im.credit)}</a></li>`).join("");
+
+renderChips(); render();
+function goHash(){ const id=location.hash.slice(1); if(!id) return; const el=document.getElementById(id); if(el) el.scrollIntoView(); }
+window.addEventListener("hashchange",goHash); setTimeout(goHash,50);
 </script>
 </body>
 </html>
