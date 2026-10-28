@@ -1,6 +1,6 @@
 # Whittington Parish Timeline
 
-A searchable timeline of Whittington parish, Chesterfield, from Domesday to today. It has 261 local events taken from [whittingtonhistory.org](https://whittingtonhistory.org), set beside 46 events from Derbyshire, Britain and the wider world.
+A searchable timeline of Whittington parish, Chesterfield, from Domesday to today. It has over 260 local events taken from [whittingtonhistory.org](https://whittingtonhistory.org), set beside 46 events from Derbyshire, Britain and the wider world.
 
 Live page: https://phil-morris17.github.io/whittington-timeline/
 
